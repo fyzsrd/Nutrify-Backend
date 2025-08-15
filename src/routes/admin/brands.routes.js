@@ -12,10 +12,10 @@ import {
 
 const router = express.Router()
 
-router.post('/',protect, addBrand);         // Create brand
-router.get('/', protect,getBrands);         // Get all brands
-router.get('/:id',protect, getBrand);       // Get single brand
-router.put('/:id',protect, updateBrand);    // Update brand
-router.delete('/:id',protect, deleteBrand); // Delete brand
+router.post('/', addBrand);         // Create brand
+router.get('/', getBrands);         // Get all brands
+router.get('/:id', getBrand);       // Get single brand
+router.put('/:id', updateBrand);    // Update brand
+router.delete('/:id', deleteBrand); // Delete brand
 
 export default router;
