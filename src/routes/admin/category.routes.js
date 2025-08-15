@@ -3,9 +3,9 @@ import {addCategory,getCategoriesController,getCategory,updateCategory,deleteCat
 import {protect} from '../../middlewares/authMiddleware.js'
 const router = express.Router();
 
-router.post('/',protect, addCategory);  // POST /api/admin/category
-router.get('/',protect,getCategoriesController)
-router.get('/:id',protect,getCategory ); 
-router.put('/:id',protect,updateCategory)
-router.delete('/:id',protect,deleteCategory)
+router.post('/', addCategory);  // POST /api/admin/category
+router.get('/',getCategoriesController)
+router.get('/:id',getCategory ); 
+router.put('/:id',updateCategory)
+router.delete('/:id',deleteCategory)
 export default router;
