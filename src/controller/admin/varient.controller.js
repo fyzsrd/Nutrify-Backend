@@ -69,7 +69,7 @@ export const updateVariant =async (req,res)=>{
 
 
 
-         res.status(201).json({message:"working"})
+         res.status(201).json({message:"working on this"})
     }catch(error){
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
