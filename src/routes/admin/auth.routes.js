@@ -4,7 +4,7 @@ import {adminRegister , adminLogin} from '../../controller/admin/auth.controller
 
 const router =express.Router();
 
-router .post('/signup',adminRegister)
-router .post('/login',adminLogin)
+router.post('/signup',adminRegister)
+router.post('/login',adminLogin)
 
 export default router ;
