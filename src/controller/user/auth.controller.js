@@ -43,27 +43,35 @@ export const verifyotp = async (req, res) => {
             return res.status(400).json({ success: false, message: "All fields are required" });
         }
 
-        
+
         const validNumber = isValidPhoneNumber(mobileNumber, countryCode);
         if (!validNumber) {
             return res.status(400).json({ success: false, message: "Enter valid mobile number" });
         }
 
-        
+
         const phoneObj = parsePhoneNumberFromString(mobileNumber, countryCode);
         if (!phoneObj) {
             return res.status(400).json({ success: false, message: "Invalid phone number" });
         }
         const e164Number = phoneObj.number;
 
-       
+
         const result = await authService.verifyOtp(e164Number, otp)
+
+        res.cookie("userToken",result.token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 60 * 60 * 1000, // 1 hour
+        });
+
 
         return res.status(200).json({
             success: true,
             message: "OTP verified successfully",
             user: result.user,
-            token: result.token, 
+            token: result.token,
         });
 
 

@@ -1,5 +1,5 @@
-import Otp from "../../models/user/OtpModel.js";
-import User from "../../models/user/UserModel.js";
+import Otp from "../../models/user/Otp.model.js";
+import User from "../../models/user/User.model.js";
 import jwt from 'jsonwebtoken'
 
 export const sendOtp = async (e164Number) => {
