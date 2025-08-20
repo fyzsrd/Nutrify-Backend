@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const otpSchema= new Schema({
-    mobileNumber:{
+    phoneNumber:{
         type : String,
         required:true
     },
