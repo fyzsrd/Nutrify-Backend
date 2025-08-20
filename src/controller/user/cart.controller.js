@@ -38,3 +38,16 @@ export const deleteCartItem = async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+//clear cart
+export const clearUserCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    console.log(userId)
+    const result = await cartService.clearCart(userId);
+    res.status(200).json({ success: true, ...result });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+};

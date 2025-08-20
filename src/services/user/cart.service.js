@@ -94,3 +94,17 @@ export const removeFromCart = async (userId, variantId) => {
 
   return cartItem;
 };
+
+
+// Clear entire cart
+
+export const clearCart = async (userId) => {
+
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+
+  await CartItem.deleteMany({cartId:cart._id})
+  return { message: "Cart cleared successfully" };
+}
