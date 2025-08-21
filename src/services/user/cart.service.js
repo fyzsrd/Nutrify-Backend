@@ -5,7 +5,7 @@ import Variant from '../../models/admin/Variant.js'
 export const getUserCartWithItems = async (userId) => {
   let cart = await Cart.findOne({ userId });
   if (!cart) {
-    cart = await Cart.create({ userId });
+    cart = await Cart.create({ userId }).select("-__v -createdAt -updatedAt ");
     return { cart, items: [] }; // empty cart
   }
 

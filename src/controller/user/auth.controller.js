@@ -56,6 +56,7 @@ export const verifyotp = async (req, res) => {
         }
         const e164Number = phoneObj.number;
 
+        
 
         const result = await authService.verifyOtp(e164Number, otp)
 
