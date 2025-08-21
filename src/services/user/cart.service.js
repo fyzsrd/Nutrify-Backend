@@ -5,7 +5,7 @@ import Variant from '../../models/admin/Variant.js'
 export const getUserCartWithItems = async (userId) => {
   let cart = await Cart.findOne({ userId });
   if (!cart) {
-    cart = await Cart.create({ userId });
+    cart = await Cart.create({ userId }).select("-__v -createdAt -updatedAt ");
     return { cart, items: [] }; // empty cart
   }
 
@@ -94,3 +94,17 @@ export const removeFromCart = async (userId, variantId) => {
 
   return cartItem;
 };
+
+
+// Clear entire cart
+
+export const clearCart = async (userId) => {
+
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+
+  await CartItem.deleteMany({cartId:cart._id})
+  return { message: "Cart cleared successfully" };
+}
