@@ -64,6 +64,11 @@ const ProductSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    defaultVariantId: { type: Schema.Types.ObjectId, ref: "Variant" },
+    defaultPrice: { type: Number },
+    defaultMrp: { type: Number },
+    defaultThumbnail: { type: String },
+
   },
   { timestamps: true }
 );

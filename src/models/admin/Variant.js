@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 import Product from "./Product.js";
-import {setNewDefaultVariant } from '../../helpers/variantHelpers.js'
+import { setNewDefaultVariant } from '../../helpers/variantHelpers.js'
 
 const variantSchema = new Schema({
   productId: {
@@ -13,10 +13,10 @@ const variantSchema = new Schema({
     type: Number, // Or Number if always in grams
     required: true
   },
-  weightType:{
-    type:String,
-    enum:["kg","lbs","g","oz"],
-    required:true
+  weightType: {
+    type: String,
+    enum: ["kg", "lbs", "g", "oz"],
+    required: true
 
   },
   flavor: {
@@ -73,22 +73,27 @@ variantSchema.pre("save", async function (next) {
 
 // After saving: update product thumbnail if default
 variantSchema.post("save", async function (doc) {
-    if (doc.isDefault && doc.images.length > 0) {
-        try {
-            await Product.findByIdAndUpdate(doc.productId, {
-                thumbnail: doc.images
-            });
-        } catch (err) {
-            console.error("Error updating product thumbnail:", err);
-        }
+  if (doc.isDefault && doc.images.length > 0) {
+    try {
+      await Product.findByIdAndUpdate(doc.productId, {
+        defaultVariantId: doc._id,
+        defaultPrice: doc.price,
+        defaultMrp: doc.mrp,
+        defaultThumbnail: doc.images?.[0] || null,
+
+        thumbnail: doc.images
+      });
+    } catch (err) {
+      console.error("Error updating product thumbnail:", err);
     }
+  }
 });
 
 // After deletion: set cheapest variant as new default if needed
 variantSchema.post("findOneAndDelete", async function (doc) {
-    if (doc?.isDefault) {
-        await setNewDefaultVariant(doc.productId, doc._id);
-    }
+  if (doc?.isDefault) {
+    await setNewDefaultVariant(doc.productId, doc._id);
+  }
 });
 
 const Variant = mongoose.model("Variant", variantSchema);
