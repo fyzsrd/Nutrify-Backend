@@ -1,5 +1,5 @@
 import express from 'express'
-import homeRoutes from './home.routes.js'
+import homeRoutes from './public.home.routes.js'
 import categoryRoutes from './category.routes.js'
 import publicProductRoutes from './public.product.routes.js'
 const router = express.Router();

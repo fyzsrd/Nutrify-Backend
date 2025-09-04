@@ -1,5 +1,5 @@
 import express from 'express'
-import {getHomeData,getProductDetail} from '../../controller/public/home.controller.js'
+import {getHomeData,getProductDetail} from '../../controller/public/public.home.controller.js'
 const router = express.Router()
 
 router.get('/',getHomeData)

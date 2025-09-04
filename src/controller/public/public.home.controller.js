@@ -1,5 +1,5 @@
 // controllers/user/home.controller.js
-import * as homeService from "../../services/public/home.service.js";
+import * as homeService from "../../services/public/public.home.service.js";
 
 export const getHomeData = async (req, res) => {
     try {

@@ -8,11 +8,11 @@ import Product from '../../models/admin/Product.js';
 export const getHomeData = async () => {
   // Fetch banners, categories, products, etc.
 
-  const categories=await Category.find({parentCategory:null}).select('-__v -createdAt -updatedAt')
+ 
     const products = await getHomeProducts();
 
      return {
-    featuredCategories: categories,
+    
     products,
     
   };
