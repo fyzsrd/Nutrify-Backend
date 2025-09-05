@@ -9,8 +9,11 @@ export const getHomeData = async () => {
   // Fetch banners, categories, products, etc.
 
  
-    const products = await getHomeProducts();
 
+    const products = await getHomeProducts();
+    // const productData = await Product.find().select('-__v -createdAt -updatedAt')
+    
+// productData,
      return {
     
     products,
@@ -35,7 +38,7 @@ export const getHomeProducts = async () => {
     flavor: v.flavor,
     weight: v.weight,
     weightType: v.weightType,
-    images: v.images,
+    defaultThumbnail: v.images,
     sku: v.sku
   }));
 };

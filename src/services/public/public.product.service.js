@@ -6,7 +6,7 @@ import Variant from "../../models/admin/Variant.js";
 export const getProductsByCategory = async (categoryId) => {
 
   const products = await Product.find({ category: categoryId })
-  .select('-__v -craetedAt -updatedAt')
+  .select('-__v -createdAt -updatedAt')
   
   
   return products
