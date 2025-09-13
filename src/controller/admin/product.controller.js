@@ -167,3 +167,18 @@ export const getProductsWithVarient = async (req, res) => {
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 }
+
+export const getProductWithVariant = async (req, res) => {
+  try {
+    const productId = req.params.id;
+    const productWithVariant =await productService.getProductWithVariant(productId)
+
+   
+    res.status(200).json({
+      status: true,
+      data: productWithVariant,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};

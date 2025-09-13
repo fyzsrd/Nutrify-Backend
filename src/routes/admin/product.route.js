@@ -1,5 +1,5 @@
 import express from 'express'
-import {addProduct , getAllProducts, getProduct,updateProduct ,deleteProduct,getProductsWithVarient} from '../../controller/admin/product.controller.js';
+import {addProduct , getAllProducts, getProduct,updateProduct ,deleteProduct,getProductsWithVarient ,getProductWithVariant} from '../../controller/admin/product.controller.js';
 
 
 const router =express.Router();
@@ -9,6 +9,9 @@ const router =express.Router();
 router.post('/',addProduct) //add product
 router.get('/',getAllProducts)
 router.get('/all',getProductsWithVarient)
+router.get('/pvw/:id',getProductWithVariant)
+
+
 
 router.get('/:id',getProduct)
 router.put('/:id',updateProduct)

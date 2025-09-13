@@ -1,4 +1,5 @@
 import Product from '../../models/admin/Product.js';
+import Variant from '../../models/admin/Variant.js'
 
 
 export const addProduct = async (data) => {
@@ -82,3 +83,15 @@ export const getProductsWithVarient = async () => {
     
     return productsWithVarient
 }
+
+export const getProductWithVariant = async (productId) => {
+  const productWithVariant = await Product.findById(productId)
+    .select('-__v -createdAt -updatedAt')
+    .populate({
+      path: 'variants', 
+      select: '-__v -createdAt -updatedAt'
+    });
+
+  if (!productWithVariant) throw new Error("Product not found");
+  return productWithVariant;
+};
