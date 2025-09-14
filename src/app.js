@@ -9,10 +9,13 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors())
+app.use(cors({
+  origin: true,      // allow any origin
+  credentials: true, // allow cookies/auth headers
+}))
 app.use(express.json());
 app.use(cookieParser())
-http://localhost:5173/categories/vitamins
+
 
 // Routes
 app.use('/api',routes);

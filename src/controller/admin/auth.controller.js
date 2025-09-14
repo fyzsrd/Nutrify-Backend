@@ -29,6 +29,7 @@ export const adminRegister = async (req, res) => {
 
 export const adminLogin = async (req, res) => {
   try {
+    
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -39,8 +40,8 @@ export const adminLogin = async (req, res) => {
 
     res.cookie("adminToken", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+        secure: false,   // disable for localhost
+      sameSite: "lax", // allow cross-origin
       maxAge: 60 * 60 * 1000,
     });
 
