@@ -8,8 +8,8 @@ const router =express.Router();
 
 router.post('/',addProduct) //add product
 router.get('/',getAllProducts)
-router.get('/all',getProductsWithVarient)
-router.get('/pvw/:id',getProductWithVariant)
+router.get('/panel',getProductsWithVarient)
+router.get('/panel/:id',getProductWithVariant)
 
 
 

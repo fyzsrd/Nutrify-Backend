@@ -10,9 +10,8 @@ const brandsSchema = new Schema({
         trim: true,
         unique: true
     },
-    logo: {
-        type: String,
-    },
+    logo: { type: String, },
+    logoPublicId: { type: String },
     description: {
         type: String,
         trim: true,
@@ -20,7 +19,7 @@ const brandsSchema = new Schema({
     },
     fromTheBrand: {
         type: String,
-       maxlength: [500, 'Content should be under 200 characters']
+        maxlength: [500, 'Content should be under 200 characters']
     }
 }, {
     timestamps: true,
