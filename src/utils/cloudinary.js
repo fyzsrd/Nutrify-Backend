@@ -9,6 +9,6 @@ cloudinary.config({
 })
 
 
-console.log(cloudinary.config());
+// console.log(cloudinary.config());
 
 export default cloudinary;

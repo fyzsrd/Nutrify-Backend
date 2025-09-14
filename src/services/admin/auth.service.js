@@ -1,18 +1,14 @@
 
 import jwt from 'jsonwebtoken';
 import Admin from '../../models/admin/admin.model.js';
-import dotenv from 'dotenv';
-
-
-dotenv.config()
 
 export const login = async ({ email, password }) => {
 
     const admin = await Admin.findOne({ email });
-    if (!admin) return res.status(400).json({ message: "Invalid credentials" });
+    if (!admin) throw new Error("Invalid credentials");
 
     const isMatch = await admin.comparePassword(password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) throw new Error("Invalid credentials");
 
     // ✅ Generate JWT
     const token = jwt.sign(
