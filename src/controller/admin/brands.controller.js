@@ -12,29 +12,13 @@ export const addBrand = async (req, res) => {
             return res.status(400).json({ success: false, message: "Brand name is required" });
         }
 
-        let logoUrl = null;
-        let logoPublicId=null
 
-        if (req.file) {
+        const brand = await brandService.createBrand(
+            {name,description, fromTheBrand },
+            req.file?.path
+        );
 
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: "brands",
-            });
-
-            logoUrl = result.secure_url;
-            logoPublicId= result.public_id;
-
-            //remove local temp file
-            fs.unlinkSync(req.file.path)   
-        }
-
-        const brand = await brandService.createBrand({
-            name,
-            description,
-            fromTheBrand,
-            logo: logoUrl,
-            logoPublicId
-        });
+        if (req.file) fs.unlinkSync(req.file.path)
 
         res.status(201).json({ success: true, data: brand });
     } catch (error) {
@@ -66,53 +50,23 @@ export const getBrand = async (req, res) => {
 
 // Update brand
 export const updateBrand = async (req, res) => {
-    try {
-        const brandId = req.params.id;
+  try {
+    const brandId = req.params.id;
+    const updatedBrand = await brandService.updateBrand(
+      brandId,
+      req.body,
+      req.file?.path
+    );
 
-        const brand = await brandService.getBrandById(brandId);
+    if (req.file) fs.unlinkSync(req.file.path);
 
-        if (!brand) {
-            return res.status(404).json({ success: false, message: "Brand not found" });
-        }
-
-
-        // If a new logo is uploaded
-        const updateData = { ...req.body };
-
-        if (req.file) {
-            //delete old logo if it exist
-            if (brand.logoPublicId) {
-                await cloudinary.uploader.destroy(brand.logoPublicId)
-            }
-
-            //upload new logo
-            const result = cloudinary.uploader.upload(req.file.path, {
-                folder: "brands",
-            });
-
-
-            uploadData.logo = result.secure_url;
-            fs.unlinkSync(req.file.path)
-        }
-
-
-        const updatedBrand = await brandService.updateBrand(
-            brandId,
-            updateData
-
-        );
-
-
-        if (!updatedBrand)
-            return res
-                .status(404)
-                .json({ success: false, message: 'Brand not found' });
-
-        res.json({ success: true, data: updatedBrand });
-
-    } catch (error) {
-        res.status(400).json({ success: false, message: error.message });
+    res.json({ success: true, data: updatedBrand });
+  } catch (error) {
+    if (req.file && fs.existsSync(req.file.path)) {
+      fs.unlinkSync(req.file.path);
     }
+    res.status(400).json({ success: false, message: error.message });
+  }
 };
 
 //delete Brand
@@ -121,20 +75,13 @@ export const deleteBrand = async (req, res) => {
         const brandId = req.params.id
         if (!brandId) return res.status(404).json({ success: false, message: 'Brand Id required' });
 
-        const brand = await brandService.getBrandById(brandId);
-        if (!brand) {
-            return res
-                .status(404)
-                .json({ success: false, message: "Brand not found" });
-        }
-
-         // If logo exists in Cloudinary, delete it
-         if(brand.logoPublicId){
-            await cloudinary.uploader.destroy(brand.logoPublicId)
-         }
 
         const deleted = await brandService.deleteBrand(brandId);
+
         if (!deleted) return res.status(404).json({ success: false, message: 'brand deletion issues' });
+
+        
+
         res.json({ success: true, message: 'Brand deleted successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
