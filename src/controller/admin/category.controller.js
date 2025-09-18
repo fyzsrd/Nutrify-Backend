@@ -119,3 +119,15 @@ export const deleteCategory = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+export const getSubCategory=async (req,res)=>{
+  try {
+   
+
+   const allSubCategory = await categoryService.getSubCategory()
+
+    res.json({ success: true, data:allSubCategory});
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}

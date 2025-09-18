@@ -1,65 +1,81 @@
 import mongoose from 'mongoose';
 import * as productService from '../../services/admin/product.service.js';
 import slugify from 'slugify';
+import fs from 'fs' 
 
+/**
+ * Add product
+ */
 export const addProduct = async (req, res) => {
+  try {
+    console.log(">>> addProduct req.body:", req.body);
+    console.log(">>> addProduct req.files:", req.files?.map(f => ({ path: f.path, originalname: f.originalname })) );
 
-    try {
-        const { name,
-            brand,
-            category,
-            isPromoted,
-            isTested,
-            description,
-            howtoUse,
-            countryInfo,
-            manufactureInfo,
-            fssaiNumber,
-            importerInfo,
-            images,
-            thumbnail,
-            isActive
-        } = req.body;
+    const {
+      name,
+      brand,
+      category,
+      isPromoted,
+      isTested,
+      description,
+      howtoUse,
+      countryInfo,
+      manufactureInfo,
+      fssaiNumber,
+      importerInfo,
+      isActive,
+    } = req.body;
 
-        if (!name || !brand || !category) {
-            return res.status(400).json({ message: "Missing required product details" });
-        }
-
-        const slug = slugify(name, { lower: true, strict: true })
-
-        const product = await productService.addProduct({
-
-            name: name.trim(),
-            slug,
-            brand,
-            category,
-            isPromoted: !!isPromoted,
-            isTested: !!isTested,
-            description: description?.trim(),
-            howtoUse: howtoUse?.trim(),
-            countryInfo: countryInfo?.trim(),
-            manufactureInfo: manufactureInfo?.trim(),
-            fssaiNumber,
-            importerInfo: importerInfo?.trim(),
-            images: Array.isArray(images) ? images : images ? [images] : [],
-            thumbnail,
-            isActive: !!isActive
-
-        })
-        console.log("controller service returned product" + product)
-        res.status(201).json({
-            status: true,
-            message: "product added succesfully",
-            data: product
-        });
-
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
-
+    if (!name || !brand || !category) {
+      // remove any uploaded temp files
+      if (req.files?.length) req.files.forEach(f => fs.existsSync(f.path) && fs.unlinkSync(f.path));
+      return res.status(400).json({ success: false, message: "Name, brand and category are required" });
     }
 
+    const slug = slugify(name, { lower: true, strict: true });
 
-}
+    const productData = {
+      name: name.trim(),
+      slug,
+      brand,
+      category,
+      isPromoted: isPromoted === "true" || isPromoted === true,
+      isTested: isTested === "true" || isTested === true,
+      description: description?.trim(),
+      howtoUse: howtoUse?.trim(),
+      countryInfo: countryInfo?.trim(),
+      manufactureInfo: manufactureInfo?.trim(),
+      // keep fssaiNumber as-is (service will coerce/validate)
+      fssaiNumber: fssaiNumber ?? null,
+      importerInfo: importerInfo?.trim(),
+      isActive: isActive === "true" || isActive === true,
+    };
+
+    const product = await productService.createProduct(productData, req.files || []);
+
+    // delete local temp files (they are already uploaded to Cloudinary)
+    if (req.files?.length) {
+      req.files.forEach((file) => { if (fs.existsSync(file.path)) fs.unlinkSync(file.path); });
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Product created successfully",
+      data: product,
+    });
+  } catch (error) {
+    // cleanup local files in case of error
+    if (req.files?.length) {
+      req.files.forEach((file) => { if (fs.existsSync(file.path)) fs.unlinkSync(file.path); });
+    }
+    console.error("Add Product Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
 
 export const getAllProducts = async (req, res) => {
     try {
@@ -155,30 +171,43 @@ export const deleteProduct = async (req, res) => {
     }
 };
 
-export const getProductsWithVarient = async (req, res) => {
-    try {
+// admin panel links
 
-        const productsWithVarient = await productService.getProductsWithVarient()
-        res.status(200).json({
-            status: true,
-            data: productsWithVarient
-        })
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
-    }
-}
-
-export const getProductWithVariant = async (req, res) => {
+//get products details
+export const getPanelProducts = async (req, res) => {
   try {
-    const productId = req.params.id;
-    const productWithVariant =await productService.getProductWithVariant(productId)
+    const productsData = await productService.getPanelProducts();
 
-   
     res.status(200).json({
       status: true,
-      data: productWithVariant,
+      data: productsData,
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    console.error("Error fetching panel products:", error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+export const getPanelProductDetails = async (req, res) => {
+  try {
+    const productId=req.params.id;
+
+    const productData = await productService.getPanelProductDetails(productId);
+
+    res.status(200).json({
+      status: true,
+      data: productData,
+    });
+  } catch (error) {
+    console.error("Error fetching panel products:", error);
+    res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };

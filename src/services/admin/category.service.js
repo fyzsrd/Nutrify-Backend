@@ -154,3 +154,8 @@ export const deleteCategory= async (categoryId)=>{
   
 }
 
+export const getSubCategory=async ()=>{
+  const allSubCategory=await Category.find({parentCategory:{$ne:null}})
+  .select('name')
+  return allSubCategory
+}

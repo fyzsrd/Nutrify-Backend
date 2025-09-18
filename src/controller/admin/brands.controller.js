@@ -87,3 +87,14 @@ export const deleteBrand = async (req, res) => {
         res.status(500).json({ success: false, message: error.message });
     }
 };
+
+export const getBrandNames=async (req,res)=>{
+    try {
+        const brandsData=await brandService.getBrandNames()
+
+        res.json({ success: true, data:brandsData });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+
+}

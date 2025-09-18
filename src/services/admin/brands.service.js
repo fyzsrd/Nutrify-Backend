@@ -102,3 +102,9 @@ export const deleteBrand = async (id) => {
 
   return await Brands.findByIdAndDelete(id);
 };
+
+
+
+export const getBrandNames = async () => {
+  return await Brands.find().select('_id name').lean();
+};
