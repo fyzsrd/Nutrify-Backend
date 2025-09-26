@@ -84,7 +84,7 @@ variantSchema.post("save", async function (doc) {
             defaultPrice: doc.price,
             defaultMrp: doc.mrp,
             defaultThumbnail: doc.images?.[0] || null,
-            thumbnail: doc.images
+            thumbnail: doc.images?.[0] || null,
           }
         : {})
     });

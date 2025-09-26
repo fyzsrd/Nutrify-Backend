@@ -144,6 +144,8 @@ export const getPanelProducts = async () => {
 export const getPanelProductDetails = async (productId) => {
     const product = await Product.findById(productId)
         .populate("variants")
+        .populate('brand',"name")
+        .populate('category','name')
         .lean();
 
 
