@@ -52,7 +52,8 @@ const variantSchema = new Schema(
     images: {
       type: [String],
       default: []
-    }
+    },
+    imagePublicId:[String]
   },
   { timestamps: true }
 );

@@ -1,15 +1,27 @@
 import * as varientService from '../../services/admin/varient.service.js'
-
+import fs from 'fs'
 
 export const addVarient = async (req, res) => {
 
     try {
-        const { productId, weight, weightType, flavor, mrp, price, stock, isBestSeller, isDefault, images } = req.body
+        const { productId,
+            weight,
+            weightType,
+            flavor,
+            mrp,
+            price,
+            stock,
+            isBestSeller,
+            isDefault,
+
+        } = req.body
+
 
         if (!productId || !weight || !weightType || !flavor || !mrp || !price || !stock) {
             return res.status(400).json({ message: "Missing product details" });
         }
 
+        const file = req.file
 
 
 
@@ -21,18 +33,26 @@ export const addVarient = async (req, res) => {
             mrp,
             price,
             stock,
-            isBestSeller,
-            isDefault,
-            images
+            isBestSeller: isBestSeller || false,
+            isDefault: isDefault || false,
+
         }
-        const varient = await varientService.addVarient(productId, varientData)
+        const varient = await varientService.addVarient(productId, varientData, file)
+
+        if (file) {
+            fs.unlink(file.path, (err) => {
+                if (err) console.error("Failed to delete temp file:", err);
+            });
+        }
 
         res.status(201).json({
             status: true,
             data: varient
         })
     } catch (error) {
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json({ 
+            message: "Internal server error",
+             error: error.message });
     }
 }
 
@@ -87,9 +107,11 @@ export const deleteVariant = async (req, res) => {
     try {
 
         const varientId = req.params.id;
+        if (!varientId) return res.status(404).json({ success: false, message: 'varient Id required' });
 
         const deleted = await varientService.deleteVarient(varientId)
 
+        if (!deleted) return res.status(404).json({ success: false, message: 'brand deletion issues' });
 
         res.status(201).json({
             succes: true
