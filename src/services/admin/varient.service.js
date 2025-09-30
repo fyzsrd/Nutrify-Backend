@@ -113,10 +113,17 @@ export const deleteVarient = async (variantId) => {
     const variant = await Variant.findById(variantId);
     if (!variant) throw new Error("Variant doesn't exist");
 
-    if(variant.imagePublicId){
-        await cloudinary.uploader.destroy(variant.imagePublicId)
-    }
+    // if(variant.imagePublicId){
+    //     await cloudinary.uploader.destroy(variant.imagePublicId)
+    // }
 
+    if(Array.isArray(variant.imagePublicId) && variant.imagePublicId.length > 0){
+        for(const publicId of variant.imagePublicId){
+            if(publicId){
+                await cloudinary.uploader.destroy(publicId)
+            }
+        }
+    }
 
     return await Variant.findOneAndDelete({ _id: variantId });
 };

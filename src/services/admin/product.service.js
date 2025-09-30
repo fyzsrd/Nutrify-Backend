@@ -112,8 +112,24 @@ export const deleteProduct = async (productId) => {
     const existing = await Product.findById(productId);
     if (!existing) throw new Error("Product doesn't exist");
 
-    const deleted = await Product.findByIdAndDelete(productId);
-    return deleted;
+    const variantCount= await Variant.countDocuments({productId})
+    if(variantCount > 0) {
+       const err= new Error("Cannot delete product with existing variants. Delete variants first.");
+        err.code = "HAS_VARIANTS"; 
+        throw err
+    }
+
+    if(existing.imagePublicIds?.length){
+      await Promise.all(
+        existing.imagePublicIds.map((publicId)=>
+          cloudinary.uploader.destroy(publicId)
+        )
+      )
+      
+    }
+
+    return await Product.findByIdAndDelete(productId);
+    
 };
 
 

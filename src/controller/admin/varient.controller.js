@@ -106,10 +106,11 @@ export const deleteVariant = async (req, res) => {
 
     try {
 
-        const varientId = req.params.id;
-        if (!varientId) return res.status(404).json({ success: false, message: 'varient Id required' });
+        const variantId = req.params.id;
+        
+        if (!variantId) return res.status(404).json({ success: false, message: 'varient Id required' });
 
-        const deleted = await varientService.deleteVarient(varientId)
+        const deleted = await varientService.deleteVarient(variantId)
 
         if (!deleted) return res.status(404).json({ success: false, message: 'brand deletion issues' });
 
@@ -118,6 +119,7 @@ export const deleteVariant = async (req, res) => {
 
         })
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 }

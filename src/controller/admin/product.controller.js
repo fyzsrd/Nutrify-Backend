@@ -152,6 +152,7 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id;
+        console.log("got",productId)
 
         if (!mongoose.isValidObjectId(productId)) {
             return res.status(400).json({ message: "Invalid product ID" });
@@ -164,6 +165,12 @@ export const deleteProduct = async (req, res) => {
             message: "Product deleted successfully"
         });
     } catch (error) {
+      if (error.code === "HAS_VARIANTS") {
+      return res.status(400).json({
+        status: false,
+        message: error.message
+      });
+    }
         res.status(500).json({
             message: "Internal server error",
             error: error.message
