@@ -16,6 +16,7 @@ const categorySchema = new Schema({
         type: String,
         required: true,
     },
+    thumbnailPublicId: { type: String },
     isActive: {
         type: Boolean,
         required: true,

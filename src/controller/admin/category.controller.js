@@ -1,65 +1,71 @@
 import * as categoryService from '../../services/admin/category.service.js'
+import fs from 'fs'
 
-
+//add categroy FIXED_DONT CHANGED WORKING
 export const addCategory = async (req, res) => {
   try {
-    const { name, parentCategory, thumbnail, isActive = true, isMain=false} = req.body || {};
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
 
-    // Validate only the truly required fields
-    if (!name || !thumbnail) {
-      return res.status(400).json({ message: 'Name and thumbnail are required' });
+    const { name, parentCategory, isActive = 'true', isMain = 'false' } = req.body || {};
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ success: false, message: "Category name is required" });
     }
 
-    // Create category
+    // Convert strings to proper types
+    const isActiveBool = isActive === 'true';
+    const isMainBool = isMain === 'true';
+    const parentCatId = parentCategory === 'null' ? null : parentCategory;
+
+    // Call service
     const category = await categoryService.addCategory({
       data: {
-        name,
-        parentCategory,
-        thumbnail,
-        isActive,
-        isMain
-      }
+        name: name.trim(),
+        parentCategory: parentCatId,
+        isActive: isActiveBool,
+        isMain: isMainBool
+      },
+      filePath: req.file?.path
     });
 
-    res.status(201).json({ message: 'Category added', category });
-
-  } catch (error) {
-    if (error.message === "Category already exists") {
-      return res.status(409).json({ message: error.message });
+    // Delete temp file after upload
+    if (req.file) {
+      fs.unlinkSync(req.file.path);
     }
 
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res.status(201).json({ success: true, message: 'Category added', category });
+
+  } catch (error) {
+    // Handle duplicate
+    if (error.message === "Category already exists") {
+      return res.status(409).json({ success: false, message: error.message });
+    }
+
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
-
+//update Category
 export const updateCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    
-    const { name, parentCategory, thumbnail, isActive } = req.body || {};
+    if (!categoryId) return res.status(400).json({ message: "Category ID is required" });
 
+    const updatedCategory = await categoryService.updateCategory(
+      categoryId,
+      req.body,
+      req.file?.path || null // pass filePath if uploaded
+    );
 
-    if (!categoryId) {
-      return res.status(400).json({ message: "Category ID is required" });
-    }
+    if (req.file) fs.unlinkSync(req.file.path); // remove temp file
 
-    const updatedCategory = await categoryService.updateCategory(categoryId, {
-      name,
-      parentCategory,
-      thumbnail,
-      isActive
-  })
-
-   res.json({ success: true, data: updatedCategory });
-
+    res.json({ success: true, data: updatedCategory });
   } catch (error) {
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
-}
+};
+
 
 export const getCategoriesController = async (req, res) => {
 
@@ -91,7 +97,7 @@ export const getCategory =async (req ,res)=>{
     const category =await categoryService.getCategory(categoryId);
     return res.status(200).json({
       success:true,
-      message:category
+      data:category
     })
   }catch(error){
     res.status(500).json({
@@ -101,18 +107,27 @@ export const getCategory =async (req ,res)=>{
   }
 }
 
-export const deleteCategory=async (req,res)=>{
-  try{
-    const categoryId=req.params.id ;
- if (!categoryId) return res.status(404).json({ success: false, message: 'Invalid catgeory' });
-    const deleted =await categoryService.deleteCategory(categoryId)
-    if (!deleted) return res.status(404).json({ success: false, message: 'category not found' });
-        res.json({ success: true, message: 'Category deleted successfully' });
+export const deleteCategory = async (req, res) => {
+  try {
+    const categoryId = req.params.id;
+    if (!categoryId) return res.status(400).json({ success: false, message: "Invalid category" });
 
-  }catch(error){
-    res.status(500).res.json({
-      success:false,
-      message:error.message
-    })
+    await categoryService.deleteCategory(categoryId);
+
+    res.json({ success: true, message: "Category deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getSubCategory=async (req,res)=>{
+  try {
+   
+
+   const allSubCategory = await categoryService.getSubCategory()
+
+    res.json({ success: true, data:allSubCategory});
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 }

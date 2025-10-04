@@ -51,19 +51,25 @@ const ProductSchema = new Schema(
     countryInfo: { type: String, trim: true },
     manufactureInfo: { type: String, trim: true },
     fssaiNumber: {
-      type: Number,
+      type: String,
       validate: {
-        validator: v => /^\d{14}$/.test(v), // Example: 14-digit FSSAI number
+        validator: v => !v || /^\d{14}$/.test(v), // allow empty or 14-digit
         message: "Invalid FSSAI number format"
       }
     },
     importerInfo: { type: String, trim: true },
-    images: [String], // Multiple image URLs
+    images: [String], // image URLs
+    imagePublicIds: [String], // cloudinary public IDs// Multiple image URLs
     thumbnail: [String], // From default variant
     isActive: {
       type: Boolean,
       default: false,
     },
+    defaultVariantId: { type: Schema.Types.ObjectId, ref: "Variant" },
+    defaultPrice: { type: Number },
+    defaultMrp: { type: Number },
+    defaultThumbnail: { type: String },
+
   },
   { timestamps: true }
 );
