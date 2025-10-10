@@ -38,15 +38,15 @@ const ProductSchema = new Schema(
     },
     description: {
       type: String,
-      maxlength: [500, "Description should be under 500 characters"],
+      maxlength: [1000, "Description should be under 1000 characters"],
     },
     howtoUse: {
       type: String,
-      maxlength: [300, "How to use should be under 300 characters"],
+      maxlength: [1000, "How to use should be under 1000 characters"],
     },
     ingredients: {
       type: String,
-      maxlength: [200, "Ingredients should be under 200 characters"],
+      maxlength: [500, "Ingredients should be under 500 characters"],
     },
     countryInfo: { type: String, trim: true },
     manufactureInfo: { type: String, trim: true },

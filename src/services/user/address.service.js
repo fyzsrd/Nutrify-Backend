@@ -3,8 +3,13 @@ import Address from "../../models/user/address.model.js";
 
 
 export const addAddress = async (userId, addressData) => {
+
+     const addressCount = await Address.countDocuments({ userId });
+    if (addressCount >= 6) throw new Error("Max limit reached. Delete unwanted addresses and try again.");
+
     const existingAddresses = await Address.find({ userId });
-    if (!existingAddresses) throw new Error("User not found");
+    
+
 
     // If first address → make it default
     if (existingAddresses.length === 0) {
