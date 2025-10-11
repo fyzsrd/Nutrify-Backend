@@ -16,6 +16,7 @@ export const getSubCategories = async (req, res) => {
   try {
     const { id } = req.params;
     const categories = await categoryService.fetchSubCategories(id);
+    
     res.json({ success: true, categories });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

@@ -6,6 +6,7 @@ import brandRoutes from './brands.routes.js'
 import productRoutes from './product.route.js'
 import varientRoutes from './varient.routes.js'
 import customerRoutes from './admin.users.routes.js'
+import dashBoardRoutes from './admin.dashBoard.routes.js'
 import { protect } from '../../middlewares/authMiddleware.js';
 
 const router  = express.Router();
@@ -20,4 +21,5 @@ router.use('/brand',brandRoutes)
 router.use('/product',productRoutes)
 router.use('/variant',varientRoutes)
 router.use('/customer',customerRoutes)
+router.use('/dashboard',dashBoardRoutes)
 export default router ;
