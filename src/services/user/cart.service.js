@@ -2,6 +2,7 @@ import Cart from "../../models/user/cart.model.js";
 import CartItem from "../../models/user/carItem.model.js";
 import Variant from '../../models/admin/Variant.js'
 
+
 export const getUserCartWithItems = async (userId) => {
   let cart = await Cart.findOne({ userId });
   if (!cart) {
@@ -107,4 +108,31 @@ export const clearCart = async (userId) => {
 
   await CartItem.deleteMany({cartId:cart._id})
   return { message: "Cart cleared successfully" };
+}
+
+export const syncCart = async (userId, guestItems = []) => {
+  const cart=await getOrCreateCart(userId)
+
+  for (const item of  guestItems){
+    const {variantId,quantity}=item;
+    const variant= await Variant.findById(variantId);
+    if (!variant) continue;
+
+    let cartItem=await CartItem.findOne({cartId:cart._id,variantId})
+
+    const newQty=(cartItem?.quantity || 0) +quantity;
+
+    if(newQty > variant.stock) continue;
+
+    if(cartItem){
+      cartItem.quantity=newQty;
+      await cartItem.save()
+
+    }else{
+        await CartItem.create({ cartId: cart._id, variantId, quantity });
+    }
+
+  }
+
+   return getUserCartWithItems(userId);
 }

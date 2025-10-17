@@ -50,7 +50,7 @@ export const verifyOtp = async (e164Number, otp) => {
 
     await Otp.deleteOne({ phoneNumber: e164Number });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_USER_SECRET, { expiresIn: '4h' })
+    const token = jwt.sign({ id: user._id }, process.env.JWT_USER_SECRET, { expiresIn: '1d' })
 
 
     return { user, token }
