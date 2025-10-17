@@ -51,3 +51,16 @@ export const clearUserCart = async (req, res) => {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
+export const syncGuestCart = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const guestItems = req.body.items || [];
+    const result = await cartService.syncCart(userId, guestItems);
+    res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+

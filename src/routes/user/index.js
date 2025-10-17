@@ -4,6 +4,9 @@ import cartRoutes from './cart.routes.js'
 import userAuth from '../../middlewares/userAuth.middleware.js'
 import addressRoutes from './address.route.js'
 import prodileRoutes from './profile.routes.js'
+import orderRoutes from './user.orders.route.js'
+
+
 const router = express.Router();
 
 router.use('/auth',authRoutes)
@@ -11,5 +14,6 @@ router.use(userAuth)
 router.use('/cart',cartRoutes)
 router.use('/address',addressRoutes)
 router.use('/profile',prodileRoutes)
+router.use('/order',orderRoutes)
 
 export default router;
