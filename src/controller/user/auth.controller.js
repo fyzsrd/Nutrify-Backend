@@ -5,6 +5,7 @@ import { isValidPhoneNumber, parsePhoneNumberFromString } from 'libphonenumber-j
 
 export const generateOtp = async (req, res) => {
     try {
+       
         const { mobileNumber, countryCode } = req.body;
 
         if (!mobileNumber || !countryCode) return res.status(400).json({ success: false, message: "Mobile number is required" });
@@ -25,7 +26,7 @@ export const generateOtp = async (req, res) => {
 
         const otp = await authService.sendOtp(e164Number)
 
-        res.status(200).json({ success: true, message: "OTP sent successfully", otp });
+        res.status(200).json({ success: true, message: "OTP sent successdddddfully", otp });
 
     } catch (error) {
         res.status(500).json({

@@ -26,7 +26,7 @@ export const addAddress = async (req, res) => {
             !city ||
             !state ||
             !addressLine ||
-            !landmark ||
+            
             !addressType
         ) {
             return res
